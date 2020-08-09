@@ -14,28 +14,30 @@ public struct BarChartView: View {
     private let title: String
     private let legend: String?
     private let style: ChartStyle
-    private let darkModeStyle: ChartStyle
+    private let darkStyle: ChartStyle
     private let formSize: CGSize
     private let dropShadow: Bool
-    private let cornerImage: Image
     private let showLabels: Bool
+    private let cornerImage: Image
 
     @State private var touchLocation: CGFloat?
 
-    @State private var currentValue: String? = nil {
+    @State private var currentValue: String? {
         didSet {
-            if oldValue != self.currentValue && currentValue != nil {
+            if oldValue != currentValue && currentValue != nil {
                 HapticFeedback.playSelection()
             }
         }
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, cornerImage: Image = Image(systemName: "waveform.path.ecg"), showLabels: Bool = true) {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
+                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, showLabels: Bool = true,
+                cornerImage: Image = Image(systemName: "waveform.path.ecg")) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : .barChartStyleOrangeDark
+        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
@@ -76,7 +78,6 @@ public struct BarChartView: View {
                 self.currentValue = nil
             }
         )
-        .gesture(TapGesture())
     }
 }
 
@@ -111,12 +112,13 @@ private extension BarChartView {
 private extension BarChartView {
     var currentChartPoint: ChartPoint? {
         guard !data.points.isEmpty, touchLocation != nil else { return nil }
-        let index = max(0, min(data.points.count - 1, Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
+        let index = max(0, min(data.points.count - 1,
+                               Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
         return self.data.points[index]
     }
 
     var currentStyle: ChartStyle {
-        colorScheme == .dark ? darkModeStyle : style
+        colorScheme == .dark ? darkStyle : style
     }
 
 //    var showLabelValue: Bool {

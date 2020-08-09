@@ -15,7 +15,7 @@ public class ChartStyle {
     public var textColor: Color
     public var legendTextColor: Color
     public var dropShadowColor: Color
-    public weak var darkModeStyle: ChartStyle?
+    public weak var darkStyle: ChartStyle?
 
     public init(backgroundColor: Color, accentColor: Color, secondGradientColor: Color, textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
         self.backgroundColor = backgroundColor
