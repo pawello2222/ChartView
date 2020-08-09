@@ -32,15 +32,16 @@ private extension BarChartRow {
     }
 
     func cell(geometry: GeometryProxy, index: Int) -> some View {
-        BarChartCell(index: index,
-                     value: normalizedValue(index: index),
-                     width: (geometry.frame(in: .local).width - 22) / (CGFloat(values.count) * 1.5),
-                     accentColor: accentColor,
-                     gradientColor: gradientColor,
-                     touchLocation: $touchLocation)
-            .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1),
-                         anchor: .bottom)
-            .animation(.spring())
+        BarChartCell(
+            index: index,
+            value: normalizedValue(index: index),
+            width: (geometry.frame(in: .local).width - 22) / (CGFloat(values.count) * 1.5),
+            accentColor: accentColor,
+            gradientColor: gradientColor
+        )
+        .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1),
+                     anchor: .bottom)
+        .animation(.spring())
     }
 }
 

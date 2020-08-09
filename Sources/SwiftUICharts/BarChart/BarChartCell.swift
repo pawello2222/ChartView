@@ -14,7 +14,6 @@ struct BarChartCell: View {
     let width: CGFloat
     let accentColor: Color
     let gradientColor: GradientColor?
-    @Binding var touchLocation: CGFloat?
 
     @State var scaleValue: Double = 0
 
@@ -28,9 +27,9 @@ struct BarChartCell: View {
         }
         .frame(width: width)
         .scaleEffect(CGSize(width: 1, height: scaleValue), anchor: .bottom)
+        .animation(Animation.spring().delay(Double(index) * 0.04))
         .onAppear {
             self.scaleValue = self.value
         }
-        .animation(Animation.spring().delay(touchLocation == nil ? Double(index) * 0.04 : 0))
     }
 }

@@ -8,23 +8,24 @@
 
 import SwiftUI
 
-public typealias ChartPoint = (label: String, value: Double, formattedValue: String, color: Color)
-
-public class ChartData: ObservableObject, Identifiable {
-    @Published var points: [ChartPoint]
-    var valuesGiven: Bool = true
-    var ID = UUID()
+public struct ChartData: Hashable {
+    let points: [ChartPoint]
 
     public init(points: [ChartPoint]) {
         self.points = points
     }
 }
 
-//public extension ChartData {
-//    struct ChartPoint {
-//        let label: String?
-//        let value: Double
-//        let formattedValue: String
-//        let color: Color?
-//    }
-//}
+public struct ChartPoint: Hashable {
+    let label: String?
+    let value: Double
+    let formattedValue: String
+    let color: Color?
+
+    public init(label: String? = nil, value: Double, formattedValue: String, color: Color? = nil) {
+        self.label = label
+        self.value = value
+        self.formattedValue = formattedValue
+        self.color = color
+    }
+}

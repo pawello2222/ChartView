@@ -54,6 +54,7 @@ public struct BarChartView: View {
                 topView
                 BarChartRow(data: data, accentColor: currentStyle.accentColor,
                             gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
+                    .id(data)
                 ZStack {
                     legendView
                     labelView
@@ -115,7 +116,7 @@ private extension BarChartView {
     @ViewBuilder
     var labelView: some View {
         if showLabels && currentChartPoint != nil {
-            LabelView(arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label))
+            LabelView(arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label ?? ""))
                 .offset(x: getLabelViewOffset(), y: -6)
                 .foregroundColor(currentStyle.legendTextColor)
         }

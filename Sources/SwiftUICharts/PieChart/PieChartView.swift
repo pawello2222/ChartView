@@ -66,6 +66,7 @@ public struct PieChartView: View {
                     .foregroundColor(style.accentColor)
                     .padding(legend != nil ? 0 : 12)
                     .offset(y: legend != nil ? 0 : -10)
+                    .id(data)
                 if legend != nil {
                     Text(legend!)
                         .font(.headline)

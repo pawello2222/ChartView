@@ -25,10 +25,8 @@ struct PieChartRow: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                ForEach(0 ..< self.slices.count) { i in
-                    PieChartCell(index: i, accentColor: self.data.points[i].color, backgroundColor: self.backgroundColor, rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg)
-                        .scaleEffect(self.currentIndex == i ? 1.1 : 1)
-                        .animation(Animation.spring())
+                ForEach(0 ..< self.slices.count, id: \.self) { index in
+                    self.sliceView(geometry: geometry, index: index)
                 }
             }
             .gesture(DragGesture()
@@ -46,6 +44,19 @@ struct PieChartRow: View {
                     self.currentIndex = nil
                 })
         }
+    }
+
+    func sliceView(geometry: GeometryProxy, index: Int) -> some View {
+        PieChartCell(
+            index: index,
+            accentColor: data.points[index].color ?? accentColor,
+            backgroundColor: backgroundColor,
+            rect: geometry.frame(in: .local),
+            startDeg: slices[index].startDeg,
+            endDeg: slices[index].endDeg
+        )
+        .scaleEffect(currentIndex == index ? 1.12 : 1)
+        .animation(Animation.spring())
     }
 }
 

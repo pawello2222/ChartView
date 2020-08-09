@@ -17,7 +17,8 @@ public class ChartStyle {
     public var dropShadowColor: Color
     public weak var darkStyle: ChartStyle?
 
-    public init(backgroundColor: Color, accentColor: Color, secondGradientColor: Color, textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
+    public init(backgroundColor: Color, accentColor: Color, secondGradientColor: Color,
+                textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
         self.backgroundColor = backgroundColor
         self.accentColor = accentColor
         self.gradientColor = GradientColor(start: accentColor, end: secondGradientColor)
@@ -26,7 +27,8 @@ public class ChartStyle {
         self.dropShadowColor = dropShadowColor
     }
 
-    public init(backgroundColor: Color, accentColor: Color, gradientColor: GradientColor, textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
+    public init(backgroundColor: Color, accentColor: Color, gradientColor: GradientColor,
+                textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
         self.backgroundColor = backgroundColor
         self.accentColor = accentColor
         self.gradientColor = gradientColor
@@ -35,95 +37,95 @@ public class ChartStyle {
         self.dropShadowColor = dropShadowColor
     }
 
-    public init(formSize: CGSize) {
-        self.backgroundColor = Color.white
+    public init() {
+        self.backgroundColor = .white
         self.accentColor = Colors.OrangeStart
         self.gradientColor = GradientColors.orange
-        self.legendTextColor = Color.gray
-        self.textColor = Color.black
-        self.dropShadowColor = Color.gray
+        self.legendTextColor = .gray
+        self.textColor = .black
+        self.dropShadowColor = .gray
     }
 }
 
 public extension ChartStyle {
     static let lineChartStyleOne = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: .white,
         accentColor: Colors.OrangeStart,
         secondGradientColor: Colors.OrangeEnd,
-        textColor: Color.black,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .black,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let barChartStyleOrangeLight = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: .white,
         accentColor: Colors.OrangeStart,
         secondGradientColor: Colors.OrangeEnd,
-        textColor: Color.black,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .black,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let barChartStyleOrangeDark = ChartStyle(
-        backgroundColor: Color.black,
+        backgroundColor: .black,
         accentColor: Colors.OrangeStart,
         secondGradientColor: Colors.OrangeEnd,
-        textColor: Color.white,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .white,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let barChartStyleNeonBlueLight = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: .white,
         accentColor: Colors.GradientNeonBlue,
         secondGradientColor: Colors.GradientPurple,
-        textColor: Color.black,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .black,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let barChartStyleNeonBlueDark = ChartStyle(
-        backgroundColor: Color.black,
+        backgroundColor: .black,
         accentColor: Colors.GradientNeonBlue,
         secondGradientColor: Colors.GradientPurple,
-        textColor: Color.white,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .white,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let barChartMidnightGreenDark = ChartStyle(
         backgroundColor: Color(hexString: "#36534D"), // 3B5147, 313D34
         accentColor: Color(hexString: "#FFD603"),
         secondGradientColor: Color(hexString: "#FFCA04"),
-        textColor: Color.white,
+        textColor: .white,
         legendTextColor: Color(hexString: "#D2E5E1"),
-        dropShadowColor: Color.gray
+        dropShadowColor: .gray
     )
 
     static let barChartMidnightGreenLight = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: .white,
         accentColor: Color(hexString: "#84A094"), // 84A094 , 698378
         secondGradientColor: Color(hexString: "#50675D"),
-        textColor: Color.black,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .black,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let pieChartStyleOne = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: .white,
         accentColor: Colors.OrangeEnd,
         secondGradientColor: Colors.OrangeStart,
-        textColor: Color.black,
-        legendTextColor: Color.gray,
-        dropShadowColor: Color.gray
+        textColor: .black,
+        legendTextColor: .gray,
+        dropShadowColor: .gray
     )
 
     static let lineViewDarkMode = ChartStyle(
-        backgroundColor: Color.black,
+        backgroundColor: .black,
         accentColor: Colors.OrangeStart,
         secondGradientColor: Colors.OrangeEnd,
-        textColor: Color.white,
-        legendTextColor: Color.white,
-        dropShadowColor: Color.gray
+        textColor: .white,
+        legendTextColor: .white,
+        dropShadowColor: .gray
     )
 }
