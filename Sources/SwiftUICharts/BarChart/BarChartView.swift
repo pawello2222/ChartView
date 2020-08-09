@@ -9,7 +9,7 @@
 import SwiftUI
 
 public struct BarChartView: View {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.colorScheme) var colorScheme
     private let data: ChartData
     private let title: String
     private let legend: String?
@@ -54,17 +54,10 @@ public struct BarChartView: View {
                 topView
                 BarChartRow(data: data, accentColor: currentStyle.accentColor,
                             gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
-//                if self.legend != nil && self.formSize == ChartForm.medium && !self.showLabelValue {
-//                    Text(self.legend!)
-//                        .font(.headline)
-//                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
-//                        .padding()
-//                } else if self.data.valuesGiven && currentChartPoint != nil {
-//                    LabelView(arrowOffset: self.getArrowOffset(touchLocation: self.touchLocation),
-//                              title: .constant(currentChartPoint!.0))
-//                        .offset(x: self.getLabelViewOffset(touchLocation: self.touchLocation), y: -6)
-//                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
-//                }
+                ZStack {
+                    legendView
+                    labelView
+                }
             }
         }
         .frame(width: formSize.width, height: formSize.height)
@@ -107,6 +100,26 @@ private extension BarChartView {
         }
         .padding()
     }
+
+    @ViewBuilder
+    var legendView: some View {
+        if legend != nil {
+            Text(legend!)
+                .font(.headline)
+                .foregroundColor(currentStyle.legendTextColor)
+                .opacity(currentChartPoint == nil ? 1 : 0.1)
+                .padding()
+        }
+    }
+
+    @ViewBuilder
+    var labelView: some View {
+        if showLabels && currentChartPoint != nil {
+            LabelView(arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label))
+                .offset(x: getLabelViewOffset(), y: -6)
+                .foregroundColor(currentStyle.legendTextColor)
+        }
+    }
 }
 
 private extension BarChartView {
@@ -121,23 +134,26 @@ private extension BarChartView {
         colorScheme == .dark ? darkStyle : style
     }
 
-//    var showLabelValue: Bool {
-//        touchLocation != nil && data.points.first?.label != nil
-//    }
+    func getArrowOffset() -> Binding<CGFloat> {
+        if let touchLocation = touchLocation {
+            let realLoc = (touchLocation * formSize.width) - 50
+            if realLoc < 10 {
+                return .constant(realLoc - 10)
+            } else if realLoc > formSize.width - 110 {
+                return .constant((formSize.width - 110 - realLoc) * -1)
+            } else {
+                return .constant(0)
+            }
+        } else {
+            return .constant(0)
+        }
+    }
 
-//    func getArrowOffset(touchLocation: CGFloat) -> Binding<CGFloat> {
-//        guard touchLocation != nil else { return }
-//        let realLoc = (self.touchLocation * self.formSize.width) - 50
-//        if realLoc < 10 {
-//            return .constant(realLoc - 10)
-//        } else if realLoc > self.formSize.width - 110 {
-//            return .constant((self.formSize.width - 110 - realLoc) * -1)
-//        } else {
-//            return .constant(0)
-//        }
-//    }
-
-//    func getLabelViewOffset(touchLocation: CGFloat) -> CGFloat {
-//        return min(self.formSize.width - 110, max(10, (self.touchLocation * self.formSize.width) - 50))
-//    }
+    func getLabelViewOffset() -> CGFloat {
+        if let touchLocation = touchLocation {
+            return min(formSize.width - 110, max(10, (touchLocation * formSize.width) - 50))
+        } else {
+            return 0
+        }
+    }
 }

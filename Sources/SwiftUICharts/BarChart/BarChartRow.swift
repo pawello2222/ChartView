@@ -38,7 +38,8 @@ private extension BarChartRow {
                      accentColor: accentColor,
                      gradientColor: gradientColor,
                      touchLocation: $touchLocation)
-            .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1), anchor: .bottom)
+            .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1),
+                         anchor: .bottom)
             .animation(.spring())
     }
 }
