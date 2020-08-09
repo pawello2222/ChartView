@@ -35,12 +35,12 @@ public struct BarChartView: View {
         return self.formSize == ChartForm.large
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = Styles.barChartStyleOrangeLight, form: CGSize? = ChartForm.medium, dropShadow: Bool? = true, cornerImage: Image? = Image(systemName: "waveform.path.ecg"), valueSpecifier: String? = "%.1f") {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, form: CGSize? = ChartForm.medium, dropShadow: Bool? = true, cornerImage: Image? = Image(systemName: "waveform.path.ecg"), valueSpecifier: String? = "%.1f") {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.barChartStyleOrangeDark
+        self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : .barChartStyleOrangeDark
         self.formSize = form!
         self.dropShadow = dropShadow!
         self.cornerImage = cornerImage!
@@ -130,18 +130,9 @@ public struct BarChartView: View {
         return min(self.formSize.width - 110, max(10, (self.touchLocation * self.formSize.width) - 50))
     }
 
-    func getCurrentValue() -> (String, Double)? {
+    func getCurrentValue() -> ChartPoint? {
         guard self.data.points.count > 0 else { return nil }
         let index = max(0, min(self.data.points.count - 1, Int(floor((self.touchLocation * self.formSize.width) / (self.formSize.width / CGFloat(self.data.points.count))))))
         return self.data.points[index]
-    }
-}
-
-struct ChartView_Previews: PreviewProvider {
-    static var previews: some View {
-        BarChartView(data: TestData.values,
-                     title: "Model 3 sales",
-                     legend: "Quarterly",
-                     valueSpecifier: "%.0f")
     }
 }

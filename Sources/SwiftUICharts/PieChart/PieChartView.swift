@@ -9,16 +9,15 @@
 import SwiftUI
 
 public struct PieChartView: View {
-    public var data: [Double]
+    public var data: ChartData
     public var title: String
     public var legend: String?
     public var style: ChartStyle
     public var formSize: CGSize
     public var dropShadow: Bool
-    public var valueSpecifier: String
 
     @State private var showValue = false
-    @State private var currentValue: Double = 0 {
+    @State private var currentValue: String = "" {
         didSet {
             if oldValue != self.currentValue && self.showValue {
                 HapticFeedback.playSelection()
@@ -26,58 +25,55 @@ public struct PieChartView: View {
         }
     }
 
-    public init(data: [Double], title: String, legend: String? = nil, style: ChartStyle = Styles.pieChartStyleOne, form: CGSize? = ChartForm.medium, dropShadow: Bool? = true, valueSpecifier: String? = "%.1f") {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
+                form: CGSize = ChartForm.medium, dropShadow: Bool = true) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        formSize = form!
+        formSize = form
         if formSize == ChartForm.large {
             formSize = ChartForm.extraLarge
         }
-        self.dropShadow = dropShadow!
-        self.valueSpecifier = valueSpecifier!
+        self.dropShadow = dropShadow
     }
 
     public var body: some View {
         ZStack {
             Rectangle()
-                .fill(self.style.backgroundColor)
+                .fill(style.backgroundColor)
                 .cornerRadius(20)
-                .shadow(color: self.style.dropShadowColor, radius: self.dropShadow ? 12 : 0)
+                .shadow(color: style.dropShadowColor, radius: dropShadow ? 12 : 0)
             VStack(alignment: .leading) {
                 HStack {
                     if !showValue {
-                        Text(self.title)
+                        Text(title)
                             .font(.headline)
-                            .foregroundColor(self.style.textColor)
+                            .foregroundColor(style.textColor)
                     } else {
-                        Text("\(self.currentValue, specifier: self.valueSpecifier)")
+                        Text(currentValue)
                             .font(.headline)
-                            .foregroundColor(self.style.textColor)
+                            .foregroundColor(style.textColor)
                     }
                     Spacer()
                     Image(systemName: "chart.pie.fill")
                         .imageScale(.large)
-                        .foregroundColor(self.style.legendTextColor)
-                }.padding()
-                PieChartRow(data: data, backgroundColor: self.style.backgroundColor, accentColor: self.style.accentColor, showValue: $showValue, currentValue: $currentValue)
-                    .foregroundColor(self.style.accentColor).padding(self.legend != nil ? 0 : 12).offset(y: self.legend != nil ? 0 : -10)
-                if self.legend != nil {
-                    Text(self.legend!)
+                        .foregroundColor(style.legendTextColor)
+                }
+                .padding()
+                PieChartRow(data: data, backgroundColor: style.backgroundColor, accentColor: style.accentColor,
+                            showValue: $showValue, currentValue: $currentValue)
+                    .foregroundColor(style.accentColor)
+                    .padding(legend != nil ? 0 : 12)
+                    .offset(y: legend != nil ? 0 : -10)
+                if legend != nil {
+                    Text(legend!)
                         .font(.headline)
-                        .foregroundColor(self.style.legendTextColor)
+                        .foregroundColor(style.legendTextColor)
                         .padding()
                 }
             }
-        }.frame(width: self.formSize.width, height: self.formSize.height)
+        }
+        .frame(width: formSize.width, height: formSize.height)
     }
 }
-
-#if DEBUG
-struct PieChartView_Previews: PreviewProvider {
-    static var previews: some View {
-        PieChartView(data: [56, 78, 53, 65, 54], title: "Title", legend: "Legend")
-    }
-}
-#endif
