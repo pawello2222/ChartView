@@ -16,10 +16,9 @@ public struct PieChartView: View {
     public var formSize: CGSize
     public var dropShadow: Bool
 
-    @State private var showValue = false
-    @State private var currentValue: String = "" {
+    @State private var currentValue: String? = nil {
         didSet {
-            if oldValue != self.currentValue && self.showValue {
+            if oldValue != currentValue && currentValue != nil {
                 HapticFeedback.playSelection()
             }
         }
@@ -46,12 +45,12 @@ public struct PieChartView: View {
                 .shadow(color: style.dropShadowColor, radius: dropShadow ? 12 : 0)
             VStack(alignment: .leading) {
                 HStack {
-                    if !showValue {
+                    if currentValue == nil {
                         Text(title)
                             .font(.headline)
                             .foregroundColor(style.textColor)
                     } else {
-                        Text(currentValue)
+                        Text(currentValue!)
                             .font(.headline)
                             .foregroundColor(style.textColor)
                     }
@@ -61,8 +60,8 @@ public struct PieChartView: View {
                         .foregroundColor(style.legendTextColor)
                 }
                 .padding()
-                PieChartRow(data: data, backgroundColor: style.backgroundColor, accentColor: style.accentColor,
-                            showValue: $showValue, currentValue: $currentValue)
+                PieChartRow(data: data, accentColor: style.accentColor, backgroundColor: style.backgroundColor, 
+                            currentValue: $currentValue)
                     .foregroundColor(style.accentColor)
                     .padding(legend != nil ? 0 : 12)
                     .offset(y: legend != nil ? 0 : -10)
