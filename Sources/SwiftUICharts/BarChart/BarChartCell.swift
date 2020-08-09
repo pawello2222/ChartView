@@ -11,7 +11,7 @@ import SwiftUI
 struct BarChartCell: View {
     let index: Int
     let value: Double
-    let width: Float
+    let width: CGFloat
     let numberOfDataPoints: Int
     let accentColor: Color
     let gradientColor: GradientColor?
@@ -27,7 +27,7 @@ struct BarChartCell: View {
                         ?? Gradient(colors: [accentColor, accentColor]), startPoint: .bottom, endPoint: .top)
                 )
         }
-        .frame(width: CGFloat(cellWidth))
+        .frame(width: cellWidth)
         .scaleEffect(CGSize(width: 1, height: scaleValue), anchor: .bottom)
         .onAppear {
             self.scaleValue = self.value
@@ -37,7 +37,7 @@ struct BarChartCell: View {
 }
 
 extension BarChartCell {
-    var cellWidth: Double {
-        Double(width) / (Double(numberOfDataPoints) * 1.5)
+    var cellWidth: CGFloat {
+        width / (CGFloat(numberOfDataPoints) * 1.5)
     }
 }

@@ -76,7 +76,7 @@ public struct BarChartView: View {
                         .imageScale(.large)
                         .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
                 }.padding()
-                BarChartRow(data: data.points.map { $0.1 },
+                BarChartRow(data: data,
                             accentColor: self.colorScheme == .dark ? self.darkModeStyle.accentColor : self.style.accentColor,
                             gradientColor: self.colorScheme == .dark ? self.darkModeStyle.gradientColor : self.style.gradientColor,
                             touchLocation: self.$touchLocation)
