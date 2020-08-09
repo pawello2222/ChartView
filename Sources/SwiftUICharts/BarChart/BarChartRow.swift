@@ -1,5 +1,5 @@
 //
-//  ChartRow.swift
+//  BarChartRow.swift
 //  SwiftUICharts
 //
 //  Created by András Samu on 2019. 06. 12..

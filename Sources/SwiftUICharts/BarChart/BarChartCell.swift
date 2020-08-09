@@ -1,5 +1,5 @@
 //
-//  ChartCell.swift
+//  BarChartCell.swift
 //  SwiftUICharts
 //
 //  Created by András Samu on 2019. 06. 12..
@@ -8,38 +8,38 @@
 
 import SwiftUI
 
-public struct BarChartCell: View {
-    var value: Double
-    var index: Int = 0
-    var width: Float
-    var numberOfDataPoints: Int
-    var cellWidth: Double {
-        return Double(width) / (Double(numberOfDataPoints) * 1.5)
-    }
+struct BarChartCell: View {
+    let index: Int
+    let value: Double
+    let width: Float
+    let numberOfDataPoints: Int
 
     var accentColor: Color
-    var gradient: GradientColor?
+    var gradient: Gradient?
+
+    @Binding var touchLocation: CGFloat
 
     @State var scaleValue: Double = 0
-    @Binding var touchLocation: CGFloat
-    public var body: some View {
+
+    var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 4)
-                .fill(LinearGradient(gradient: gradient?.getGradient() ?? GradientColor(start: accentColor, end: accentColor).getGradient(), startPoint: .bottom, endPoint: .top))
+                .fill(
+                    LinearGradient(gradient: gradient
+                        ?? Gradient(colors: [accentColor, accentColor]), startPoint: .bottom, endPoint: .top)
+                )
         }
-        .frame(width: CGFloat(self.cellWidth))
-        .scaleEffect(CGSize(width: 1, height: self.scaleValue), anchor: .bottom)
+        .frame(width: CGFloat(cellWidth))
+        .scaleEffect(CGSize(width: 1, height: scaleValue), anchor: .bottom)
         .onAppear {
             self.scaleValue = self.value
         }
-        .animation(Animation.spring().delay(self.touchLocation < 0 ? Double(self.index) * 0.04 : 0))
+        .animation(Animation.spring().delay(touchLocation < 0 ? Double(index) * 0.04 : 0))
     }
 }
 
-#if DEBUG
-struct ChartCell_Previews: PreviewProvider {
-    static var previews: some View {
-        BarChartCell(value: Double(0.75), width: 320, numberOfDataPoints: 12, accentColor: Colors.OrangeStart, gradient: nil, touchLocation: .constant(-1))
+extension BarChartCell {
+    var cellWidth: Double {
+        Double(width) / (Double(numberOfDataPoints) * 1.5)
     }
 }
-#endif

@@ -1,5 +1,5 @@
 //
-//  ChartView.swift
+//  BarChartView.swift
 //  SwiftUICharts
 //
 //  Created by András Samu on 2019. 06. 12..
@@ -35,13 +35,13 @@ public struct BarChartView: View {
         return self.formSize == ChartForm.large
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, form: CGSize? = ChartForm.medium, dropShadow: Bool? = true, cornerImage: Image? = Image(systemName: "waveform.path.ecg"), valueSpecifier: String? = "%.1f") {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize? = ChartForm.medium, dropShadow: Bool? = true, cornerImage: Image? = Image(systemName: "waveform.path.ecg"), valueSpecifier: String? = "%.1f") {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : .barChartStyleOrangeDark
-        self.formSize = form!
+        self.formSize = formSize!
         self.dropShadow = dropShadow!
         self.cornerImage = cornerImage!
         self.valueSpecifier = valueSpecifier!
