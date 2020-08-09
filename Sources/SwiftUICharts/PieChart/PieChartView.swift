@@ -9,12 +9,12 @@
 import SwiftUI
 
 public struct PieChartView: View {
-    public var data: ChartData
-    public var title: String
-    public var legend: String?
-    public var style: ChartStyle
-    public var formSize: CGSize
-    public var dropShadow: Bool
+    public let data: ChartData
+    public let title: String
+    public let legend: String?
+    public let style: ChartStyle
+    public let formSize: CGSize
+    public let dropShadow: Bool
 
     @State private var currentValue: String? = nil {
         didSet {
@@ -25,14 +25,15 @@ public struct PieChartView: View {
     }
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
-                form: CGSize = ChartForm.medium, dropShadow: Bool = true) {
+                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        formSize = form
         if formSize == ChartForm.large {
-            formSize = ChartForm.extraLarge
+            self.formSize = ChartForm.extraLarge
+        } else {
+            self.formSize = formSize
         }
         self.dropShadow = dropShadow
     }
@@ -42,7 +43,7 @@ public struct PieChartView: View {
             Rectangle()
                 .fill(style.backgroundColor)
                 .cornerRadius(20)
-                .shadow(color: style.dropShadowColor, radius: dropShadow ? 12 : 0)
+                .shadow(color: style.dropShadowColor, radius: dropShadow ? 10 : 0)
             VStack(alignment: .leading) {
                 HStack {
                     if currentValue == nil {
@@ -60,7 +61,7 @@ public struct PieChartView: View {
                         .foregroundColor(style.legendTextColor)
                 }
                 .padding()
-                PieChartRow(data: data, accentColor: style.accentColor, backgroundColor: style.backgroundColor, 
+                PieChartRow(data: data, accentColor: style.accentColor, backgroundColor: style.backgroundColor,
                             currentValue: $currentValue)
                     .foregroundColor(style.accentColor)
                     .padding(legend != nil ? 0 : 12)
