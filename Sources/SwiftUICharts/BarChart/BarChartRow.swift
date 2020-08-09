@@ -25,8 +25,7 @@ public struct BarChartRow: View {
         GeometryReader { geometry in
             HStack(alignment: .bottom, spacing: (geometry.frame(in: .local).width - 22) / CGFloat(self.data.count * 3)) {
                 ForEach(0 ..< self.data.count, id: \.self) { i in
-                    BarChartCell(value: self.normalizedValue(index: i),
-                                 index: i,
+                    BarChartCell(index: i, value: self.normalizedValue(index: i),
                                  width: Float(geometry.frame(in: .local).width - 22),
                                  numberOfDataPoints: self.data.count,
                                  accentColor: self.accentColor,

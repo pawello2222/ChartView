@@ -15,7 +15,7 @@ struct BarChartCell: View {
     let numberOfDataPoints: Int
 
     var accentColor: Color
-    var gradient: Gradient?
+    var gradient: GradientColor?
 
     @Binding var touchLocation: CGFloat
 
@@ -25,7 +25,7 @@ struct BarChartCell: View {
         ZStack {
             RoundedRectangle(cornerRadius: 4)
                 .fill(
-                    LinearGradient(gradient: gradient
+                    LinearGradient(gradient: gradient?.getGradient()
                         ?? Gradient(colors: [accentColor, accentColor]), startPoint: .bottom, endPoint: .top)
                 )
         }
