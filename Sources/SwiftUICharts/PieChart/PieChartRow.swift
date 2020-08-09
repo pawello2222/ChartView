@@ -14,10 +14,10 @@ struct PieChartRow: View {
     let backgroundColor: Color
     @Binding var currentValue: String?
 
-    @State private var currentTouchedIndex: Int? = nil {
+    @State private var currentIndex: Int? = nil {
         didSet {
-            if oldValue != currentTouchedIndex {
-                currentValue = currentTouchedIndex != nil ? data.points[currentTouchedIndex!].formattedValue : nil
+            if oldValue != currentIndex {
+                currentValue = currentIndex != nil ? data.points[currentIndex!].formattedValue : nil
             }
         }
     }
@@ -27,7 +27,7 @@ struct PieChartRow: View {
             ZStack {
                 ForEach(0 ..< self.slices.count) { i in
                     PieChartCell(index: i, accentColor: self.data.points[i].color, backgroundColor: self.backgroundColor, rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg)
-                        .scaleEffect(self.currentTouchedIndex == i ? 1.1 : 1)
+                        .scaleEffect(self.currentIndex == i ? 1.1 : 1)
                         .animation(Animation.spring())
                 }
             }
@@ -37,13 +37,13 @@ struct PieChartRow: View {
                     let isTouchInPie = self.isPointInCircle(point: value.location, circleRect: rect)
                     if isTouchInPie {
                         let touchDegree = self.degree(for: value.location, inCircleRect: rect)
-                        self.currentTouchedIndex = self.slices.firstIndex { $0.startDeg < touchDegree && $0.endDeg > touchDegree } ?? nil
+                        self.currentIndex = self.slices.firstIndex { $0.startDeg < touchDegree && $0.endDeg > touchDegree } ?? nil
                     } else {
-                        self.currentTouchedIndex = nil
+                        self.currentIndex = nil
                     }
                 }
                 .onEnded { value in
-                    self.currentTouchedIndex = nil
+                    self.currentIndex = nil
                 })
         }
     }
@@ -71,12 +71,11 @@ private extension PieChartRow {
 }
 
 private extension PieChartRow {
-    struct PieSlice: Identifiable {
-        var id = UUID()
-        var startDeg: Double
-        var endDeg: Double
-        var value: Double
-        var normalizedValue: Double
+    struct PieSlice {
+        let startDeg: Double
+        let endDeg: Double
+        let value: Double
+        let normalizedValue: Double
     }
 }
 
