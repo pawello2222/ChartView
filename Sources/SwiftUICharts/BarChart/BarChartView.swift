@@ -10,22 +10,21 @@ import SwiftUI
 
 public struct BarChartView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
-    private var data: ChartData
-    public var title: String
-    public var legend: String?
-    public var style: ChartStyle
-    public var darkModeStyle: ChartStyle
-    public var formSize: CGSize
-    public var dropShadow: Bool
-    public var cornerImage: Image
-    public var valueSpecifier: String
+    private let data: ChartData
+    private let title: String
+    private let legend: String?
+    private let style: ChartStyle
+    private let darkModeStyle: ChartStyle
+    private let formSize: CGSize
+    private let dropShadow: Bool
+    private let cornerImage: Image
 
-    @State private var touchLocation: CGFloat = -1.0
-    @State private var showValue: Bool = false
+    @State private var touchLocation: CGFloat = -1
     @State private var showLabelValue: Bool = false
-    @State private var currentValue: Double = 0 {
+
+    @State private var currentValue: String? = nil {
         didSet {
-            if oldValue != self.currentValue && self.showValue {
+            if oldValue != self.currentValue && currentValue != nil {
                 HapticFeedback.playSelection()
             }
         }
@@ -35,16 +34,15 @@ public struct BarChartView: View {
         return self.formSize == ChartForm.large
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize? = ChartForm.medium, dropShadow: Bool? = true, cornerImage: Image? = Image(systemName: "waveform.path.ecg"), valueSpecifier: String? = "%.1f") {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, cornerImage: Image = Image(systemName: "waveform.path.ecg")) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : .barChartStyleOrangeDark
-        self.formSize = formSize!
-        self.dropShadow = dropShadow!
-        self.cornerImage = cornerImage!
-        self.valueSpecifier = valueSpecifier!
+        self.formSize = formSize
+        self.dropShadow = dropShadow
+        self.cornerImage = cornerImage
     }
 
     public var body: some View {
@@ -55,16 +53,16 @@ public struct BarChartView: View {
                 .shadow(color: self.style.dropShadowColor, radius: self.dropShadow ? 8 : 0)
             VStack(alignment: .leading) {
                 HStack {
-                    if !showValue {
+                    if currentValue == nil {
                         Text(self.title)
                             .font(.headline)
                             .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
                     } else {
-                        Text("\(self.currentValue, specifier: self.valueSpecifier)")
+                        Text(currentValue!)
                             .font(.headline)
                             .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
                     }
-                    if self.formSize == ChartForm.large && self.legend != nil && !showValue {
+                    if self.formSize == ChartForm.large && self.legend != nil {
                         Text(self.legend!)
                             .font(.callout)
                             .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.accentColor : self.style.accentColor)
@@ -85,9 +83,9 @@ public struct BarChartView: View {
                         .font(.headline)
                         .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
                         .padding()
-                } else if self.data.valuesGiven && self.getCurrentValue() != nil {
+                } else if self.data.valuesGiven && currentChartPoint != nil {
                     LabelView(arrowOffset: self.getArrowOffset(touchLocation: self.touchLocation),
-                              title: .constant(self.getCurrentValue()!.0))
+                              title: .constant(currentChartPoint!.0))
                         .offset(x: self.getLabelViewOffset(touchLocation: self.touchLocation), y: -6)
                         .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
                 }
@@ -99,14 +97,13 @@ public struct BarChartView: View {
             .gesture(DragGesture()
                 .onChanged { value in
                     self.touchLocation = value.location.x / self.formSize.width
-                    self.showValue = true
-                    self.currentValue = self.getCurrentValue()?.1 ?? 0
+                    self.currentValue = self.currentChartPoint?.formattedValue ?? ""
                     if self.data.valuesGiven, self.formSize == ChartForm.medium {
                         self.showLabelValue = true
                     }
                 }
                 .onEnded { value in
-                    self.showValue = false
+                    self.currentValue = nil
                     self.showLabelValue = false
                     self.touchLocation = -1
                 }
@@ -115,6 +112,9 @@ public struct BarChartView: View {
             )
     }
 
+}
+
+private extension BarChartView {
     func getArrowOffset(touchLocation: CGFloat) -> Binding<CGFloat> {
         let realLoc = (self.touchLocation * self.formSize.width) - 50
         if realLoc < 10 {
@@ -129,10 +129,10 @@ public struct BarChartView: View {
     func getLabelViewOffset(touchLocation: CGFloat) -> CGFloat {
         return min(self.formSize.width - 110, max(10, (self.touchLocation * self.formSize.width) - 50))
     }
-
-    func getCurrentValue() -> ChartPoint? {
-        guard self.data.points.count > 0 else { return nil }
-        let index = max(0, min(self.data.points.count - 1, Int(floor((self.touchLocation * self.formSize.width) / (self.formSize.width / CGFloat(self.data.points.count))))))
+    
+    var currentChartPoint: ChartPoint? {
+        guard !data.points.isEmpty else { return nil }
+        let index = max(0, min(data.points.count - 1, Int(floor((touchLocation * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
         return self.data.points[index]
     }
 }

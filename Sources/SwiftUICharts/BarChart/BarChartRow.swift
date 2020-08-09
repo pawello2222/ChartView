@@ -33,13 +33,13 @@ private extension BarChartRow {
 
     func cell(geometry: GeometryProxy, index: Int) -> some View {
         BarChartCell(index: index,
-                     value: self.normalizedValue(index: index),
+                     value: normalizedValue(index: index),
                      width: geometry.frame(in: .local).width - 22,
                      numberOfDataPoints: values.count,
-                     accentColor: self.accentColor,
-                     gradientColor: self.gradientColor,
-                     touchLocation: self.$touchLocation)
-            .scaleEffect(self.touchLocation > CGFloat(index) / CGFloat(values.count) && self.touchLocation < CGFloat(index + 1) / CGFloat(values.count) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1), anchor: .bottom)
+                     accentColor: accentColor,
+                     gradientColor: gradientColor,
+                     touchLocation: $touchLocation)
+            .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1), anchor: .bottom)
             .animation(.spring())
     }
 }
@@ -58,5 +58,9 @@ private extension BarChartRow {
 
     func normalizedValue(index: Int) -> Double {
         return Double(values[index]) / Double(maxValue)
+    }
+
+    func isTouchInCell(index: Int) -> Bool {
+        touchLocation > CGFloat(index) / CGFloat(values.count) && touchLocation < CGFloat(index + 1) / CGFloat(values.count)
     }
 }
