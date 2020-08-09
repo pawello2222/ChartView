@@ -12,10 +12,9 @@ struct BarChartCell: View {
     let index: Int
     let value: Double
     let width: CGFloat
-    let numberOfDataPoints: Int
     let accentColor: Color
     let gradientColor: GradientColor?
-    @Binding var touchLocation: CGFloat
+    @Binding var touchLocation: CGFloat?
 
     @State var scaleValue: Double = 0
 
@@ -27,17 +26,11 @@ struct BarChartCell: View {
                         ?? Gradient(colors: [accentColor, accentColor]), startPoint: .bottom, endPoint: .top)
                 )
         }
-        .frame(width: cellWidth)
+        .frame(width: width)
         .scaleEffect(CGSize(width: 1, height: scaleValue), anchor: .bottom)
         .onAppear {
             self.scaleValue = self.value
         }
-        .animation(Animation.spring().delay(touchLocation < 0 ? Double(index) * 0.04 : 0))
-    }
-}
-
-extension BarChartCell {
-    var cellWidth: CGFloat {
-        width / (CGFloat(numberOfDataPoints) * 1.5)
+        .animation(Animation.spring().delay(touchLocation == nil ? Double(index) * 0.04 : 0))
     }
 }

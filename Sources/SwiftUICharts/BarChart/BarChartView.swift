@@ -18,9 +18,9 @@ public struct BarChartView: View {
     private let formSize: CGSize
     private let dropShadow: Bool
     private let cornerImage: Image
+    private let showLabels: Bool
 
-    @State private var touchLocation: CGFloat = -1
-    @State private var showLabelValue: Bool = false
+    @State private var touchLocation: CGFloat?
 
     @State private var currentValue: String? = nil {
         didSet {
@@ -30,11 +30,7 @@ public struct BarChartView: View {
         }
     }
 
-    var isFullWidth: Bool {
-        return self.formSize == ChartForm.large
-    }
-
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, cornerImage: Image = Image(systemName: "waveform.path.ecg")) {
+    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight, formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, cornerImage: Image = Image(systemName: "waveform.path.ecg"), showLabels: Bool = true) {
         self.data = data
         self.title = title
         self.legend = legend
@@ -43,96 +39,103 @@ public struct BarChartView: View {
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
+        self.showLabels = showLabels
     }
 
     public var body: some View {
         ZStack {
             Rectangle()
-                .fill(self.colorScheme == .dark ? self.darkModeStyle.backgroundColor : self.style.backgroundColor)
+                .fill(currentStyle.backgroundColor)
                 .cornerRadius(20)
-                .shadow(color: self.style.dropShadowColor, radius: self.dropShadow ? 8 : 0)
+                .shadow(color: currentStyle.dropShadowColor, radius: dropShadow ? 8 : 0)
             VStack(alignment: .leading) {
-                HStack {
-                    if currentValue == nil {
-                        Text(self.title)
-                            .font(.headline)
-                            .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
-                    } else {
-                        Text(currentValue!)
-                            .font(.headline)
-                            .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
-                    }
-                    if self.formSize == ChartForm.large && self.legend != nil {
-                        Text(self.legend!)
-                            .font(.callout)
-                            .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.accentColor : self.style.accentColor)
-                            .transition(.opacity)
-                            .animation(.easeOut)
-                    }
-                    Spacer()
-                    self.cornerImage
-                        .imageScale(.large)
-                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
-                }.padding()
-                BarChartRow(data: data,
-                            accentColor: self.colorScheme == .dark ? self.darkModeStyle.accentColor : self.style.accentColor,
-                            gradientColor: self.colorScheme == .dark ? self.darkModeStyle.gradientColor : self.style.gradientColor,
-                            touchLocation: self.$touchLocation)
-                if self.legend != nil && self.formSize == ChartForm.medium && !self.showLabelValue {
-                    Text(self.legend!)
-                        .font(.headline)
-                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
-                        .padding()
-                } else if self.data.valuesGiven && currentChartPoint != nil {
-                    LabelView(arrowOffset: self.getArrowOffset(touchLocation: self.touchLocation),
-                              title: .constant(currentChartPoint!.0))
-                        .offset(x: self.getLabelViewOffset(touchLocation: self.touchLocation), y: -6)
-                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
-                }
+                topView
+                BarChartRow(data: data, accentColor: currentStyle.accentColor,
+                            gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
+//                if self.legend != nil && self.formSize == ChartForm.medium && !self.showLabelValue {
+//                    Text(self.legend!)
+//                        .font(.headline)
+//                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
+//                        .padding()
+//                } else if self.data.valuesGiven && currentChartPoint != nil {
+//                    LabelView(arrowOffset: self.getArrowOffset(touchLocation: self.touchLocation),
+//                              title: .constant(currentChartPoint!.0))
+//                        .offset(x: self.getLabelViewOffset(touchLocation: self.touchLocation), y: -6)
+//                        .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.legendTextColor : self.style.legendTextColor)
+//                }
             }
-        }.frame(minWidth: self.formSize.width,
-                maxWidth: self.isFullWidth ? .infinity : self.formSize.width,
-                minHeight: self.formSize.height,
-                maxHeight: self.formSize.height)
-            .gesture(DragGesture()
-                .onChanged { value in
-                    self.touchLocation = value.location.x / self.formSize.width
-                    self.currentValue = self.currentChartPoint?.formattedValue ?? ""
-                    if self.data.valuesGiven, self.formSize == ChartForm.medium {
-                        self.showLabelValue = true
-                    }
-                }
-                .onEnded { value in
-                    self.currentValue = nil
-                    self.showLabelValue = false
-                    self.touchLocation = -1
-                }
-            )
-            .gesture(TapGesture()
-            )
+        }
+        .frame(width: formSize.width, height: formSize.height)
+        .gesture(DragGesture()
+            .onChanged { touch in
+                self.touchLocation = touch.location.x / self.formSize.width
+                self.currentValue = self.currentChartPoint?.formattedValue ?? ""
+            }
+            .onEnded { _ in
+                self.touchLocation = nil
+                self.currentValue = nil
+            }
+        )
+        .gesture(TapGesture())
     }
-
 }
 
 private extension BarChartView {
-    func getArrowOffset(touchLocation: CGFloat) -> Binding<CGFloat> {
-        let realLoc = (self.touchLocation * self.formSize.width) - 50
-        if realLoc < 10 {
-            return .constant(realLoc - 10)
-        } else if realLoc > self.formSize.width - 110 {
-            return .constant((self.formSize.width - 110 - realLoc) * -1)
-        } else {
-            return .constant(0)
+    var topView: some View {
+        HStack {
+            if currentValue == nil {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(currentStyle.textColor)
+            } else {
+                Text(currentValue!)
+                    .font(.headline)
+                    .foregroundColor(currentStyle.textColor)
+            }
+            if self.formSize == ChartForm.large && self.legend != nil {
+                Text(self.legend!)
+                    .font(.callout)
+                    .foregroundColor(currentStyle.accentColor)
+                    .transition(.opacity)
+                    .animation(.easeOut)
+            }
+            Spacer()
+            self.cornerImage
+                .imageScale(.large)
+                .foregroundColor(currentStyle.legendTextColor)
         }
+        .padding()
     }
+}
 
-    func getLabelViewOffset(touchLocation: CGFloat) -> CGFloat {
-        return min(self.formSize.width - 110, max(10, (self.touchLocation * self.formSize.width) - 50))
-    }
-    
+private extension BarChartView {
     var currentChartPoint: ChartPoint? {
-        guard !data.points.isEmpty else { return nil }
-        let index = max(0, min(data.points.count - 1, Int(floor((touchLocation * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
+        guard !data.points.isEmpty, touchLocation != nil else { return nil }
+        let index = max(0, min(data.points.count - 1, Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
         return self.data.points[index]
     }
+
+    var currentStyle: ChartStyle {
+        colorScheme == .dark ? darkModeStyle : style
+    }
+
+//    var showLabelValue: Bool {
+//        touchLocation != nil && data.points.first?.label != nil
+//    }
+
+//    func getArrowOffset(touchLocation: CGFloat) -> Binding<CGFloat> {
+//        guard touchLocation != nil else { return }
+//        let realLoc = (self.touchLocation * self.formSize.width) - 50
+//        if realLoc < 10 {
+//            return .constant(realLoc - 10)
+//        } else if realLoc > self.formSize.width - 110 {
+//            return .constant((self.formSize.width - 110 - realLoc) * -1)
+//        } else {
+//            return .constant(0)
+//        }
+//    }
+
+//    func getLabelViewOffset(touchLocation: CGFloat) -> CGFloat {
+//        return min(self.formSize.width - 110, max(10, (self.touchLocation * self.formSize.width) - 50))
+//    }
 }

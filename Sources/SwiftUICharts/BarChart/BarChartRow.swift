@@ -12,7 +12,7 @@ struct BarChartRow: View {
     let data: ChartData
     let accentColor: Color
     let gradientColor: GradientColor?
-    @Binding var touchLocation: CGFloat
+    @Binding var touchLocation: CGFloat?
 
     var body: some View {
         GeometryReader { geometry in
@@ -34,8 +34,7 @@ private extension BarChartRow {
     func cell(geometry: GeometryProxy, index: Int) -> some View {
         BarChartCell(index: index,
                      value: normalizedValue(index: index),
-                     width: geometry.frame(in: .local).width - 22,
-                     numberOfDataPoints: values.count,
+                     width: (geometry.frame(in: .local).width - 22) / (CGFloat(values.count) * 1.5),
                      accentColor: accentColor,
                      gradientColor: gradientColor,
                      touchLocation: $touchLocation)
@@ -61,6 +60,11 @@ private extension BarChartRow {
     }
 
     func isTouchInCell(index: Int) -> Bool {
-        touchLocation > CGFloat(index) / CGFloat(values.count) && touchLocation < CGFloat(index + 1) / CGFloat(values.count)
+        if let touchLocation = touchLocation {
+            return touchLocation > CGFloat(index) / CGFloat(values.count)
+                && touchLocation < CGFloat(index + 1) / CGFloat(values.count)
+        } else {
+            return false
+        }
     }
 }
