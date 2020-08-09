@@ -1,6 +1,6 @@
 //
 //  ChartView.swift
-//  ChartView
+//  SwiftUICharts
 //
 //  Created by András Samu on 2019. 06. 12..
 //  Copyright © 2019. András Samu. All rights reserved.

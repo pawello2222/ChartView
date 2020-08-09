@@ -1,8 +1,9 @@
 //
-//  File.swift
-//
+//  ChartForm.swift
+//  SwiftUICharts
 //
 //  Created by Pawel on 09/08/2020.
+//  Copyright © 2020 Pawel Wiszenko. All rights reserved.
 //
 
 import SwiftUI

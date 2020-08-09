@@ -1,8 +1,9 @@
 //
-//  File.swift
-//
+//  Color+Ext.swift
+//  SwiftUICharts
 //
 //  Created by András Samu on 2019. 07. 19..
+//  Copyright © 2019. András Samu. All rights reserved.
 //
 
 import Foundation
@@ -55,10 +56,6 @@ public struct GradientColors {
     public static let prplNeon = GradientColor(start: Color(hexString: "FE019A"), end: Color(hexString: "FE0BF4"))
     public static let orngPink = GradientColor(start: Color(hexString: "FF8E2D"), end: Color(hexString: "FF4E7A"))
 }
-
-
-
-
 
 extension Color {
     init(hexString: String) {

@@ -1,6 +1,6 @@
 //
 //  PieChartRow.swift
-//  ChartView
+//  SwiftUICharts
 //
 //  Created by András Samu on 2019. 06. 12..
 //  Copyright © 2019. András Samu. All rights reserved.
@@ -8,79 +8,113 @@
 
 import SwiftUI
 
-public struct PieChartRow: View {
-    public var data: ChartData
-    var backgroundColor: Color
-    var accentColor: Color
-    var values: [Double] {
-        data.points.map(\.value)
-    }
-
-    var maxValue: Double {
-        values.reduce(0, +)
-    }
-
-    var slices: [PieSlice] {
-        var tempSlices: [PieSlice] = []
-        var lastEndDeg: Double = 0
-        for slice in values {
-            let normalized: Double = Double(slice) / Double(maxValue)
-            let startDeg = lastEndDeg
-            let endDeg = lastEndDeg + (normalized * 360)
-            lastEndDeg = endDeg
-            tempSlices.append(PieSlice(startDeg: startDeg, endDeg: endDeg, value: slice, normalizedValue: normalized))
+extension PieChartView {
+    public struct PieChartRow: View {
+        public var data: ChartData
+        var backgroundColor: Color
+        var accentColor: Color
+        var values: [Double] {
+            data.points.map(\.value)
         }
-        return tempSlices
-    }
 
-    @Binding var showValue: Bool
-    @Binding var currentValue: String
+        var maxValue: Double {
+            values.reduce(0, +)
+        }
 
-    @State private var currentTouchedIndex: Int? = nil {
-        didSet {
-            if oldValue != currentTouchedIndex {
-                showValue = currentTouchedIndex != nil
-                currentValue = showValue ? data.points[currentTouchedIndex!].formattedValue : ""
+        var slices: [PieSlice] {
+            var tempSlices: [PieSlice] = []
+            var lastEndDeg: Double = 0
+            for slice in values {
+                let normalized: Double = Double(slice) / Double(maxValue)
+                let startDeg = lastEndDeg
+                let endDeg = lastEndDeg + (normalized * 360)
+                lastEndDeg = endDeg
+                tempSlices.append(PieSlice(startDeg: startDeg, endDeg: endDeg, value: slice, normalizedValue: normalized))
             }
+            return tempSlices
         }
-    }
 
-    public var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(0 ..< self.slices.count) { i in
-                    PieChartCell(rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg, index: i, backgroundColor: self.backgroundColor, accentColor: self.data.points[i].color)
-                        .scaleEffect(self.currentTouchedIndex == i ? 1.1 : 1)
-                        .animation(Animation.spring())
+        @Binding var showValue: Bool
+        @Binding var currentValue: String
+
+        @State private var currentTouchedIndex: Int? = nil {
+            didSet {
+                if oldValue != currentTouchedIndex {
+                    showValue = currentTouchedIndex != nil
+                    currentValue = showValue ? data.points[currentTouchedIndex!].formattedValue : ""
                 }
             }
-            .gesture(DragGesture()
-                .onChanged { value in
-                    let rect = geometry.frame(in: .local)
-                    let isTouchInPie = isPointInCircle(point: value.location, circleRect: rect)
-                    if isTouchInPie {
-                        let touchDegree = degree(for: value.location, inCircleRect: rect)
-                        self.currentTouchedIndex = self.slices.firstIndex { $0.startDeg < touchDegree && $0.endDeg > touchDegree } ?? nil
-                    } else {
-                        self.currentTouchedIndex = nil
+        }
+
+        public var body: some View {
+            GeometryReader { geometry in
+                ZStack {
+                    ForEach(0 ..< self.slices.count) { i in
+                        PieChartCell(index: i, accentColor: self.data.points[i].color, backgroundColor: self.backgroundColor, rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg)
+                            .scaleEffect(self.currentTouchedIndex == i ? 1.1 : 1)
+                            .animation(Animation.spring())
                     }
                 }
-                .onEnded { value in
-                    self.currentTouchedIndex = nil
-                })
+                .gesture(DragGesture()
+                    .onChanged { value in
+                        let rect = geometry.frame(in: .local)
+                        let isTouchInPie = self.isPointInCircle(point: value.location, circleRect: rect)
+                        if isTouchInPie {
+                            let touchDegree = self.degree(for: value.location, inCircleRect: rect)
+                            self.currentTouchedIndex = self.slices.firstIndex { $0.startDeg < touchDegree && $0.endDeg > touchDegree } ?? nil
+                        } else {
+                            self.currentTouchedIndex = nil
+                        }
+                    }
+                    .onEnded { value in
+                        self.currentTouchedIndex = nil
+                    })
+            }
         }
     }
 }
 
-// #if DEBUG
-// struct PieChartRow_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            PieChartRow(data: [8, 23, 54, 32, 12, 37, 7, 23, 43], backgroundColor: Color(red: 252.0 / 255.0, green: 236.0 / 255.0, blue: 234.0 / 255.0), accentColor: Color(red: 225.0 / 255.0, green: 97.0 / 255.0, blue: 76.0 / 255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-//                .frame(width: 100, height: 100)
-//            PieChartRow(data: [0], backgroundColor: Color(red: 252.0 / 255.0, green: 236.0 / 255.0, blue: 234.0 / 255.0), accentColor: Color(red: 225.0 / 255.0, green: 97.0 / 255.0, blue: 76.0 / 255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-//                .frame(width: 100, height: 100)
-//        }
-//    }
-// }
-// #endif
+extension PieChartView.PieChartRow {
+    struct PieSlice: Identifiable {
+        var id = UUID()
+        var startDeg: Double
+        var endDeg: Double
+        var value: Double
+        var normalizedValue: Double
+    }
+}
+
+extension PieChartView.PieChartRow {
+    func isPointInCircle(point: CGPoint, circleRect: CGRect) -> Bool {
+        let r = min(circleRect.width, circleRect.height) / 2
+        let center = CGPoint(x: circleRect.midX, y: circleRect.midY)
+        let dx = point.x - center.x
+        let dy = point.y - center.y
+        let distance = sqrt(dx * dx + dy * dy)
+        return distance <= r
+    }
+
+    func degree(for point: CGPoint, inCircleRect circleRect: CGRect) -> Double {
+        let center = CGPoint(x: circleRect.midX, y: circleRect.midY)
+        let dx = point.x - center.x
+        let dy = point.y - center.y
+        let acuteDegree = Double(atan(dy / dx)) * (180 / .pi)
+
+        let isInBottomRight = dx >= 0 && dy >= 0
+        let isInBottomLeft = dx <= 0 && dy >= 0
+        let isInTopLeft = dx <= 0 && dy <= 0
+        let isInTopRight = dx >= 0 && dy <= 0
+
+        if isInBottomRight {
+            return acuteDegree
+        } else if isInBottomLeft {
+            return 180 - abs(acuteDegree)
+        } else if isInTopLeft {
+            return 180 + abs(acuteDegree)
+        } else if isInTopRight {
+            return 360 - abs(acuteDegree)
+        }
+
+        return 0
+    }
+}
