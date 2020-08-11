@@ -20,12 +20,12 @@ public struct ChartPoint: Hashable {
     let label: String?
     let value: Double
     let formattedValue: String
-    let color: Color?
+    let gradientColor: GradientColor?
 
-    public init(label: String? = nil, value: Double, formattedValue: String, color: Color? = nil) {
+    public init(label: String? = nil, value: Double, formattedValue: String, gradientColor: GradientColor? = nil) {
         self.label = label
         self.value = value
         self.formattedValue = formattedValue
-        self.color = color
+        self.gradientColor = gradientColor
     }
 }

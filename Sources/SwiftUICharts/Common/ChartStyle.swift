@@ -40,7 +40,7 @@ public class ChartStyle {
     public init() {
         self.backgroundColor = .white
         self.accentColor = Colors.OrangeStart
-        self.gradientColor = GradientColors.orange
+        self.gradientColor = .orange
         self.legendTextColor = .gray
         self.textColor = .black
         self.dropShadowColor = .gray

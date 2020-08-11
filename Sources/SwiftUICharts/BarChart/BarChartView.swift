@@ -9,7 +9,7 @@
 import SwiftUI
 
 public struct BarChartView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     private let data: ChartData
     private let title: String
     private let legend: String?
@@ -28,6 +28,17 @@ public struct BarChartView: View {
                 HapticFeedback.playSelection()
             }
         }
+    }
+
+    private var currentChartPoint: ChartPoint? {
+        guard !data.points.isEmpty, touchLocation != nil else { return nil }
+        let index = max(0, min(data.points.count - 1,
+                               Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
+        return self.data.points[index]
+    }
+
+    private var currentStyle: ChartStyle {
+        colorScheme == .dark ? darkStyle : style
     }
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
@@ -52,8 +63,7 @@ public struct BarChartView: View {
                 .shadow(color: currentStyle.dropShadowColor, radius: dropShadow ? 8 : 0)
             VStack(alignment: .leading) {
                 topView
-                BarChartRow(data: data, accentColor: currentStyle.accentColor,
-                            gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
+                BarChartRow(data: data, gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
                     .id(data)
                 ZStack {
                     legendView
@@ -87,13 +97,6 @@ private extension BarChartView {
                     .font(.headline)
                     .foregroundColor(currentStyle.textColor)
             }
-            if self.formSize == ChartForm.large && self.legend != nil {
-                Text(self.legend!)
-                    .font(.callout)
-                    .foregroundColor(currentStyle.accentColor)
-                    .transition(.opacity)
-                    .animation(.easeOut)
-            }
             Spacer()
             self.cornerImage
                 .imageScale(.large)
@@ -124,17 +127,6 @@ private extension BarChartView {
 }
 
 private extension BarChartView {
-    var currentChartPoint: ChartPoint? {
-        guard !data.points.isEmpty, touchLocation != nil else { return nil }
-        let index = max(0, min(data.points.count - 1,
-                               Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
-        return self.data.points[index]
-    }
-
-    var currentStyle: ChartStyle {
-        colorScheme == .dark ? darkStyle : style
-    }
-
     func getArrowOffset() -> Binding<CGFloat> {
         if let touchLocation = touchLocation {
             let realLoc = (touchLocation * formSize.width) - 50

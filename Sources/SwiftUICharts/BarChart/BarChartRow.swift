@@ -10,8 +10,7 @@ import SwiftUI
 
 struct BarChartRow: View {
     let data: ChartData
-    let accentColor: Color
-    let gradientColor: GradientColor?
+    let gradientColor: GradientColor
     @Binding var touchLocation: CGFloat?
 
     var body: some View {
@@ -36,8 +35,7 @@ private extension BarChartRow {
             index: index,
             value: normalizedValue(index: index),
             width: (geometry.frame(in: .local).width - 22) / (CGFloat(values.count) * 1.5),
-            accentColor: accentColor,
-            gradientColor: gradientColor
+            gradientColor: data.points[index].gradientColor ?? gradientColor
         )
         .scaleEffect(isTouchInCell(index: index) ? CGSize(width: 1.4, height: 1.1) : CGSize(width: 1, height: 1),
                      anchor: .bottom)
