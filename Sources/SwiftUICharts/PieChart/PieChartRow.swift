@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PieChartRow: View {
     let data: ChartData
-    let accentColor: Color
+    let gradientColor: GradientColor
     let backgroundColor: Color
     @Binding var currentValue: String?
 
@@ -49,11 +49,11 @@ struct PieChartRow: View {
     func sliceView(geometry: GeometryProxy, index: Int) -> some View {
         PieChartCell(
             index: index,
-            accentColor: data.points[index].color ?? accentColor,
-            backgroundColor: backgroundColor,
             rect: geometry.frame(in: .local),
             startDeg: slices[index].startDeg,
-            endDeg: slices[index].endDeg
+            endDeg: slices[index].endDeg,
+            gradientColor: data.points[index].gradientColor ?? gradientColor,
+            backgroundColor: backgroundColor
         )
         .scaleEffect(currentIndex == index ? 1.12 : 1)
         .animation(Animation.spring())

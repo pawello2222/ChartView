@@ -21,7 +21,7 @@ public class ChartStyle {
                 textColor: Color, legendTextColor: Color, dropShadowColor: Color) {
         self.backgroundColor = backgroundColor
         self.accentColor = accentColor
-        self.gradientColor = GradientColor(start: accentColor, end: secondGradientColor)
+        self.gradientColor = GradientColor(accentColor, secondGradientColor)
         self.textColor = textColor
         self.legendTextColor = legendTextColor
         self.dropShadowColor = dropShadowColor
@@ -40,7 +40,7 @@ public class ChartStyle {
     public init() {
         self.backgroundColor = .white
         self.accentColor = Colors.OrangeStart
-        self.gradientColor = GradientColors.orange
+        self.gradientColor = .orange
         self.legendTextColor = .gray
         self.textColor = .black
         self.dropShadowColor = .gray

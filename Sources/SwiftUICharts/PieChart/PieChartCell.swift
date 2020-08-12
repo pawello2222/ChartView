@@ -10,18 +10,17 @@ import SwiftUI
 
 struct PieChartCell: View {
     let index: Int
-    let accentColor: Color
-    let backgroundColor: Color
     let rect: CGRect
     let startDeg: Double
     let endDeg: Double
+    let gradientColor: GradientColor
+    let backgroundColor: Color
 
     @State private var show: Bool = false
 
     var body: some View {
         path
-            .fill()
-            .foregroundColor(accentColor)
+            .fill(LinearGradient(gradient: gradientColor.gradient, startPoint: .bottom, endPoint: .top))
             .overlay(path.stroke(backgroundColor, lineWidth: 2))
             .scaleEffect(show ? 1 : 0)
             .animation(Animation.spring().delay(Double(index) * 0.04))
