@@ -12,12 +12,12 @@ struct PieChartRow: View {
     let data: ChartData
     let gradientColor: GradientColor
     let backgroundColor: Color
-    @Binding var currentValue: String?
+    @Binding var currentChartPoint: ChartPoint?
 
     @State private var currentIndex: Int? = nil {
         didSet {
             if oldValue != currentIndex {
-                currentValue = currentIndex != nil ? data.points[currentIndex!].formattedValue : nil
+                currentChartPoint = currentIndex != nil ? data.points[currentIndex!] : nil
             }
         }
     }

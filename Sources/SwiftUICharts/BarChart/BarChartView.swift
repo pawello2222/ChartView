@@ -17,7 +17,6 @@ public struct BarChartView: View {
     private let darkStyle: ChartStyle
     private let formSize: CGSize
     private let dropShadow: Bool
-    private let showLabels: Bool
     private let cornerImage: Image
 
     @State private var touchLocation: CGFloat?
@@ -42,7 +41,7 @@ public struct BarChartView: View {
     }
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
-                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true, showLabels: Bool = true,
+                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
                 cornerImage: Image = Image(systemName: "waveform.path.ecg")) {
         self.data = data
         self.title = title
@@ -52,7 +51,6 @@ public struct BarChartView: View {
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
-        self.showLabels = showLabels
     }
 
     public var body: some View {
@@ -118,8 +116,8 @@ private extension BarChartView {
 
     @ViewBuilder
     var labelView: some View {
-        if showLabels && currentChartPoint != nil {
-            LabelView(arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label ?? ""))
+        if legend != nil && currentChartPoint != nil {
+            LabelView(showArrow: true, arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label ?? ""))
                 .offset(x: getLabelViewOffset(), y: -6)
                 .foregroundColor(currentStyle.legendTextColor)
         }
