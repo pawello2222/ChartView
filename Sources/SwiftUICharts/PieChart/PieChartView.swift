@@ -55,7 +55,7 @@ public struct PieChartView: View {
                 topView
                 PieChartRow(data: data, gradientColor: currentStyle.gradientColor,
                             backgroundColor: currentStyle.backgroundColor, currentChartPoint: $currentChartPoint)
-                    .padding(.bottom, legend != nil ? 0 : 12)
+                    .padding(.bottom, 10)
                     .id(data)
                 ZStack {
                     HStack {
@@ -100,14 +100,14 @@ private extension PieChartView {
                 .font(.headline)
                 .foregroundColor(currentStyle.legendTextColor)
                 .opacity(currentChartPoint == nil ? 1 : 0.1)
-                .padding()
+                .padding([.bottom, .leading, .trailing])
         }
     }
 
     @ViewBuilder
     var labelView: some View {
         if legend != nil && currentChartPoint?.label != nil {
-            LabelView(showArrow: false, arrowOffset: .constant(0), title: .constant(currentChartPoint!.label ?? ""))
+            LabelView(showArrow: false, arrowOffset: 0, title: currentChartPoint!.label ?? "")
                 .offset(x: -10, y: -6)
                 .foregroundColor(currentStyle.legendTextColor)
         }

@@ -63,7 +63,7 @@ public struct BarChartView: View {
                 topView
                 BarChartRow(data: data, gradientColor: currentStyle.gradientColor, touchLocation: $touchLocation)
                     .id(data)
-                ZStack {
+                ZStack(alignment: .leading) {
                     legendView
                     labelView
                 }
@@ -117,30 +117,30 @@ private extension BarChartView {
     @ViewBuilder
     var labelView: some View {
         if legend != nil && currentChartPoint != nil {
-            LabelView(showArrow: true, arrowOffset: getArrowOffset(), title: .constant(currentChartPoint!.label ?? ""))
-                .offset(x: getLabelViewOffset(), y: -6)
+            LabelView(showArrow: true, arrowOffset: arrowOffset, title: currentChartPoint!.label ?? "")
+                .offset(x: labelViewOffset, y: -6)
                 .foregroundColor(currentStyle.legendTextColor)
         }
     }
 }
 
 private extension BarChartView {
-    func getArrowOffset() -> Binding<CGFloat> {
+    var arrowOffset: CGFloat {
         if let touchLocation = touchLocation {
             let realLoc = (touchLocation * formSize.width) - 50
             if realLoc < 10 {
-                return .constant(realLoc - 10)
+                return realLoc - 10
             } else if realLoc > formSize.width - 110 {
-                return .constant((formSize.width - 110 - realLoc) * -1)
+                return (formSize.width - 110 - realLoc) * -1
             } else {
-                return .constant(0)
+                return 0
             }
         } else {
-            return .constant(0)
+            return 0
         }
     }
 
-    func getLabelViewOffset() -> CGFloat {
+    var labelViewOffset: CGFloat {
         if let touchLocation = touchLocation {
             return min(formSize.width - 110, max(10, (touchLocation * formSize.width) - 50))
         } else {
