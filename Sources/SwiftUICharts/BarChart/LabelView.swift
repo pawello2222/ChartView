@@ -10,8 +10,8 @@ import SwiftUI
 
 struct LabelView: View {
     let showArrow: Bool
-    @Binding var arrowOffset: CGFloat
-    @Binding var title: String
+    let arrowOffset: CGFloat
+    let title: String
 
     var body: some View {
         VStack {
