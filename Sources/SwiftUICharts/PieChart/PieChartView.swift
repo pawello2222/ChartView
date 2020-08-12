@@ -18,9 +18,9 @@ public struct PieChartView: View {
     private let formSize: CGSize
     private let dropShadow: Bool
 
-    @State private var currentValue: String? = nil {
+    @State private var currentChartPoint: ChartPoint? = nil {
         didSet {
-            if oldValue != currentValue && currentValue != nil {
+            if oldValue != currentChartPoint && currentChartPoint != nil {
                 HapticFeedback.playSelection()
             }
         }
@@ -50,15 +50,23 @@ public struct PieChartView: View {
             Rectangle()
                 .fill(currentStyle.backgroundColor)
                 .cornerRadius(20)
-                .shadow(color: currentStyle.dropShadowColor, radius: dropShadow ? 10 : 0)
+                .shadow(color: currentStyle.dropShadowColor, radius: dropShadow ? 8 : 0)
             VStack(alignment: .leading) {
                 topView
                 PieChartRow(data: data, gradientColor: currentStyle.gradientColor,
-                            backgroundColor: currentStyle.backgroundColor, currentValue: $currentValue)
-                    .padding(legend != nil ? 0 : 12)
-                    .offset(y: legend != nil ? 0 : -10)
+                            backgroundColor: currentStyle.backgroundColor, currentChartPoint: $currentChartPoint)
+                    .padding(.bottom, legend != nil ? 0 : 12)
                     .id(data)
-                legendView
+                ZStack {
+                    HStack {
+                        legendView
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        labelView
+                    }
+                }
             }
         }
         .frame(width: formSize.width, height: formSize.height)
@@ -68,12 +76,12 @@ public struct PieChartView: View {
 private extension PieChartView {
     var topView: some View {
         HStack {
-            if currentValue == nil {
+            if currentChartPoint == nil {
                 Text(title)
                     .font(.headline)
                     .foregroundColor(currentStyle.textColor)
             } else {
-                Text(currentValue!)
+                Text(currentChartPoint!.formattedValue)
                     .font(.headline)
                     .foregroundColor(currentStyle.textColor)
             }
@@ -82,7 +90,7 @@ private extension PieChartView {
                 .imageScale(.large)
                 .foregroundColor(currentStyle.legendTextColor)
         }
-        .padding()
+        .padding([.top, .leading, .trailing])
     }
 
     @ViewBuilder
@@ -91,7 +99,17 @@ private extension PieChartView {
             Text(legend!)
                 .font(.headline)
                 .foregroundColor(currentStyle.legendTextColor)
+                .opacity(currentChartPoint == nil ? 1 : 0.1)
                 .padding()
+        }
+    }
+
+    @ViewBuilder
+    var labelView: some View {
+        if legend != nil && currentChartPoint?.label != nil {
+            LabelView(showArrow: false, arrowOffset: .constant(0), title: .constant(currentChartPoint!.label ?? ""))
+                .offset(x: -10, y: -6)
+                .foregroundColor(currentStyle.legendTextColor)
         }
     }
 }

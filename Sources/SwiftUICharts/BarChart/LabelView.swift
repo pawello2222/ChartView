@@ -9,16 +9,19 @@
 import SwiftUI
 
 struct LabelView: View {
+    let showArrow: Bool
     @Binding var arrowOffset: CGFloat
     @Binding var title: String
 
     var body: some View {
         VStack {
-            ArrowUp()
-                .fill(Color.white)
-                .frame(width: 20, height: 12, alignment: .center)
-                .shadow(color: Color.gray, radius: 8, x: 0, y: 0)
-                .offset(x: getArrowOffset(offset: arrowOffset), y: 12)
+            if showArrow {
+                ArrowUp()
+                    .fill(Color.white)
+                    .frame(width: 20, height: 12, alignment: .center)
+                    .shadow(color: Color.gray, radius: 8, x: 0, y: 0)
+                    .offset(x: getArrowOffset(offset: arrowOffset), y: 12)
+            }
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
                     .frame(width: 100, height: 32, alignment: .center)
@@ -27,11 +30,13 @@ struct LabelView: View {
                 Text(title)
                     .font(.caption)
                     .bold()
-                ArrowUp()
-                    .fill(Color.white)
-                    .frame(width: 20, height: 12, alignment: .center)
-                    .zIndex(999)
-                    .offset(x: getArrowOffset(offset: arrowOffset), y: -20)
+                if showArrow {
+                    ArrowUp()
+                        .fill(Color.white)
+                        .frame(width: 20, height: 12, alignment: .center)
+                        .zIndex(999)
+                        .offset(x: getArrowOffset(offset: arrowOffset), y: -20)
+                }
             }
         }
     }
