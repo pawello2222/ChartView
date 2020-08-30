@@ -18,6 +18,7 @@ public struct BarChartView: View {
     private let formSize: CGSize
     private let dropShadow: Bool
     private let cornerImage: Image
+    private let cornerImageAction: () -> Void
 
     @State private var touchLocation: CGFloat?
 
@@ -42,7 +43,8 @@ public struct BarChartView: View {
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
                 formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
-                cornerImage: Image = Image(systemName: "waveform.path.ecg")) {
+                cornerImage: Image = Image(systemName: "waveform.path.ecg"),
+                cornerImageAction: @escaping () -> Void = {}) {
         self.data = data
         self.title = title
         self.legend = legend
@@ -51,6 +53,7 @@ public struct BarChartView: View {
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
+        self.cornerImageAction = cornerImageAction
     }
 
     public var body: some View {
@@ -99,6 +102,7 @@ private extension BarChartView {
             self.cornerImage
                 .imageScale(.large)
                 .foregroundColor(currentStyle.legendTextColor)
+                .onTapGesture(perform: cornerImageAction)
         }
         .padding()
     }
