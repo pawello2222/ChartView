@@ -25,6 +25,7 @@ struct PieChartRow: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                Color.clear
                 ForEach(0 ..< self.slices.count, id: \.self) { index in
                     self.sliceView(geometry: geometry, index: index)
                 }

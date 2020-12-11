@@ -15,8 +15,11 @@ struct BarChartRow: View {
 
     var body: some View {
         GeometryReader { geometry in
-            self.row(geometry: geometry)
-                .padding([.top, .leading, .trailing], 10)
+            ZStack {
+                Color.clear
+                self.row(geometry: geometry)
+                    .padding([.top, .leading, .trailing], 10)
+            }
         }
     }
 }

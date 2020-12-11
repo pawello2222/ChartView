@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct PieChartView: View {
+public struct PieChartView<ImageContent>: View where ImageContent: View {
     @Environment(\.colorScheme) private var colorScheme
     private let data: ChartData
     private let title: String
@@ -17,6 +17,7 @@ public struct PieChartView: View {
     private let darkStyle: ChartStyle
     private let formSize: CGSize
     private let dropShadow: Bool
+    private let cornerImage: () -> ImageContent
 
     @State private var currentChartPoint: ChartPoint? = nil {
         didSet {
@@ -31,7 +32,9 @@ public struct PieChartView: View {
     }
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
-                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true) {
+                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
+                cornerImage: @escaping () -> ImageContent)
+    {
         self.data = data
         self.title = title
         self.legend = legend
@@ -43,6 +46,7 @@ public struct PieChartView: View {
             self.formSize = formSize
         }
         self.dropShadow = dropShadow
+        self.cornerImage = cornerImage
     }
 
     public var body: some View {
@@ -73,6 +77,25 @@ public struct PieChartView: View {
     }
 }
 
+public extension PieChartView where ImageContent == EmptyView {
+    init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
+         formSize: CGSize = ChartForm.medium, dropShadow: Bool = true)
+    {
+        self.data = data
+        self.title = title
+        self.legend = legend
+        self.style = style
+        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        if formSize == ChartForm.large {
+            self.formSize = ChartForm.extraLarge
+        } else {
+            self.formSize = formSize
+        }
+        self.dropShadow = dropShadow
+        self.cornerImage = { EmptyView() }
+    }
+}
+
 private extension PieChartView {
     var topView: some View {
         HStack {
@@ -86,8 +109,7 @@ private extension PieChartView {
                     .foregroundColor(currentStyle.textColor)
             }
             Spacer()
-            Image(systemName: "chart.pie.fill")
-                .imageScale(.large)
+            self.cornerImage()
                 .foregroundColor(currentStyle.legendTextColor)
         }
         .padding([.top, .leading, .trailing])

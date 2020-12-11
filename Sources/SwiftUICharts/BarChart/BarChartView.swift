@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct BarChartView: View {
+public struct BarChartView<ImageContent>: View where ImageContent: View {
     @Environment(\.colorScheme) private var colorScheme
     private let data: ChartData
     private let title: String
@@ -17,8 +17,7 @@ public struct BarChartView: View {
     private let darkStyle: ChartStyle
     private let formSize: CGSize
     private let dropShadow: Bool
-    private let cornerImage: Image
-    private let cornerImageAction: () -> Void
+    private let cornerImage: () -> ImageContent
 
     @State private var touchLocation: CGFloat?
 
@@ -43,8 +42,8 @@ public struct BarChartView: View {
 
     public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
                 formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
-                cornerImage: Image = Image(systemName: "waveform.path.ecg"),
-                cornerImageAction: @escaping () -> Void = {}) {
+                cornerImage: @escaping () -> ImageContent)
+    {
         self.data = data
         self.title = title
         self.legend = legend
@@ -53,7 +52,6 @@ public struct BarChartView: View {
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
-        self.cornerImageAction = cornerImageAction
     }
 
     public var body: some View {
@@ -86,6 +84,21 @@ public struct BarChartView: View {
     }
 }
 
+public extension BarChartView where ImageContent == EmptyView {
+    init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
+         formSize: CGSize = ChartForm.medium, dropShadow: Bool = true)
+    {
+        self.data = data
+        self.title = title
+        self.legend = legend
+        self.style = style
+        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        self.formSize = formSize
+        self.dropShadow = dropShadow
+        self.cornerImage = { EmptyView() }
+    }
+}
+
 private extension BarChartView {
     var topView: some View {
         HStack {
@@ -99,10 +112,8 @@ private extension BarChartView {
                     .foregroundColor(currentStyle.textColor)
             }
             Spacer()
-            self.cornerImage
-                .imageScale(.large)
+            self.cornerImage()
                 .foregroundColor(currentStyle.legendTextColor)
-                .onTapGesture(perform: cornerImageAction)
         }
         .padding()
     }
