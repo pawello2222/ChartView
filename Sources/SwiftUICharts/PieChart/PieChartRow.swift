@@ -41,9 +41,10 @@ struct PieChartRow: View {
                         self.currentIndex = nil
                     }
                 }
-                .onEnded { value in
+                .onEnded { _ in
                     self.currentIndex = nil
-                })
+                }
+            )
         }
     }
 
@@ -61,19 +62,19 @@ struct PieChartRow: View {
     }
 }
 
-private extension PieChartRow {
-    var values: [Double] {
+extension PieChartRow {
+    private var values: [Double] {
         data.points.map(\.value)
     }
 
-    var maxValue: Double {
+    private var maxValue: Double {
         values.reduce(0, +)
     }
 
-    var slices: [PieSlice] {
+    private var slices: [PieSlice] {
         var lastEndDeg: Double = 0
         return values.map { value in
-            let normalized: Double = Double(value) / Double(maxValue)
+            let normalized = Double(value) / Double(maxValue)
             let startDeg = lastEndDeg
             let endDeg = lastEndDeg + (normalized * 360)
             lastEndDeg = endDeg
@@ -82,8 +83,8 @@ private extension PieChartRow {
     }
 }
 
-private extension PieChartRow {
-    struct PieSlice {
+extension PieChartRow {
+    private struct PieSlice {
         let startDeg: Double
         let endDeg: Double
         let value: Double
@@ -91,8 +92,8 @@ private extension PieChartRow {
     }
 }
 
-private extension PieChartRow {
-    func isPointInCircle(point: CGPoint, circleRect: CGRect) -> Bool {
+extension PieChartRow {
+    private func isPointInCircle(point: CGPoint, circleRect: CGRect) -> Bool {
         let r = min(circleRect.width, circleRect.height) / 2
         let center = CGPoint(x: circleRect.midX, y: circleRect.midY)
         let dx = point.x - center.x
@@ -101,7 +102,7 @@ private extension PieChartRow {
         return distance <= r
     }
 
-    func degree(for point: CGPoint, inCircleRect circleRect: CGRect) -> Double {
+    private func degree(for point: CGPoint, inCircleRect circleRect: CGRect) -> Double {
         let center = CGPoint(x: circleRect.midX, y: circleRect.midY)
         let dx = point.x - center.x
         let dy = point.y - center.y

@@ -31,15 +31,20 @@ public struct PieChartView<ImageContent>: View where ImageContent: View {
         colorScheme == .dark ? darkStyle : style
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
-                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
-                cornerImage: @escaping () -> ImageContent)
-    {
+    public init(
+        data: ChartData,
+        title: String,
+        legend: String? = nil,
+        style: ChartStyle = .pieChartStyleOne,
+        formSize: CGSize = ChartForm.medium,
+        dropShadow: Bool = true,
+        cornerImage: @escaping () -> ImageContent
+    ) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
         if formSize == ChartForm.large {
             self.formSize = ChartForm.extraLarge
         } else {
@@ -77,27 +82,32 @@ public struct PieChartView<ImageContent>: View where ImageContent: View {
     }
 }
 
-public extension PieChartView where ImageContent == EmptyView {
-    init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .pieChartStyleOne,
-         formSize: CGSize = ChartForm.medium, dropShadow: Bool = true)
-    {
+extension PieChartView where ImageContent == EmptyView {
+    public init(
+        data: ChartData,
+        title: String,
+        legend: String? = nil,
+        style: ChartStyle = .pieChartStyleOne,
+        formSize: CGSize = ChartForm.medium,
+        dropShadow: Bool = true
+    ) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
         if formSize == ChartForm.large {
             self.formSize = ChartForm.extraLarge
         } else {
             self.formSize = formSize
         }
         self.dropShadow = dropShadow
-        self.cornerImage = { EmptyView() }
+        cornerImage = { EmptyView() }
     }
 }
 
-private extension PieChartView {
-    var topView: some View {
+extension PieChartView {
+    private var topView: some View {
         HStack {
             if currentChartPoint == nil {
                 Text(title)
@@ -116,7 +126,7 @@ private extension PieChartView {
     }
 
     @ViewBuilder
-    var legendView: some View {
+    private var legendView: some View {
         if legend != nil {
             Text(legend!)
                 .font(.headline)
@@ -127,7 +137,7 @@ private extension PieChartView {
     }
 
     @ViewBuilder
-    var labelView: some View {
+    private var labelView: some View {
         if legend != nil && currentChartPoint?.label != nil {
             LabelView(showArrow: false, arrowOffset: 0, title: currentChartPoint!.label ?? "")
                 .offset(x: -10, y: -6)

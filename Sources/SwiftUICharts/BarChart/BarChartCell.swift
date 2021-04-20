@@ -23,7 +23,7 @@ struct BarChartCell: View {
         }
         .frame(width: width)
         .scaleEffect(CGSize(width: 1, height: scaleValue), anchor: .bottom)
-        .animation(Animation.spring().delay(Double(index) * 0.04))
+        .animation(Animation.spring().delay(Double(index) * 0.04), value: scaleValue)
         .onAppear {
             self.scaleValue = self.value
         }

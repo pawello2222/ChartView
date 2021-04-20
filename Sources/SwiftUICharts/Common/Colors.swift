@@ -9,26 +9,26 @@
 import Foundation
 import SwiftUI
 
-public struct Colors {
-    public static let color1: Color = Color(hexString: "#E2FAE7")
-    public static let color1Accent: Color = Color(hexString: "#72BF82")
-    public static let color2: Color = Color(hexString: "#EEF1FF")
-    public static let color2Accent: Color = Color(hexString: "#4266E8")
-    public static let color3: Color = Color(hexString: "#FCECEA")
-    public static let color3Accent: Color = Color(hexString: "#E1614C")
-    public static let OrangeEnd: Color = Color(hexString: "#FF782C")
-    public static let OrangeStart: Color = Color(hexString: "#EC2301")
-    public static let LegendText: Color = Color(hexString: "#A7A6A8")
-    public static let LegendColor: Color = Color(hexString: "#E8E7EA")
-    public static let LegendDarkColor: Color = Color(hexString: "#545454")
-    public static let IndicatorKnob: Color = Color(hexString: "#FF57A6")
-    public static let GradientUpperBlue: Color = Color(hexString: "#C2E8FF")
-    public static let GradinetUpperBlue1: Color = Color(hexString: "#A8E1FF")
-    public static let GradientPurple: Color = Color(hexString: "#7B75FF")
-    public static let GradientNeonBlue: Color = Color(hexString: "#6FEAFF")
-    public static let GradientLowerBlue: Color = Color(hexString: "#F1F9FF")
-    public static let DarkPurple: Color = Color(hexString: "#1B205E")
-    public static let BorderBlue: Color = Color(hexString: "#4EBCFF")
+public enum Colors {
+    public static let color1 = Color(hexString: "#E2FAE7")
+    public static let color1Accent = Color(hexString: "#72BF82")
+    public static let color2 = Color(hexString: "#EEF1FF")
+    public static let color2Accent = Color(hexString: "#4266E8")
+    public static let color3 = Color(hexString: "#FCECEA")
+    public static let color3Accent = Color(hexString: "#E1614C")
+    public static let OrangeEnd = Color(hexString: "#FF782C")
+    public static let OrangeStart = Color(hexString: "#EC2301")
+    public static let LegendText = Color(hexString: "#A7A6A8")
+    public static let LegendColor = Color(hexString: "#E8E7EA")
+    public static let LegendDarkColor = Color(hexString: "#545454")
+    public static let IndicatorKnob = Color(hexString: "#FF57A6")
+    public static let GradientUpperBlue = Color(hexString: "#C2E8FF")
+    public static let GradinetUpperBlue1 = Color(hexString: "#A8E1FF")
+    public static let GradientPurple = Color(hexString: "#7B75FF")
+    public static let GradientNeonBlue = Color(hexString: "#6FEAFF")
+    public static let GradientLowerBlue = Color(hexString: "#F1F9FF")
+    public static let DarkPurple = Color(hexString: "#1B205E")
+    public static let BorderBlue = Color(hexString: "#4EBCFF")
 }
 
 extension Color {

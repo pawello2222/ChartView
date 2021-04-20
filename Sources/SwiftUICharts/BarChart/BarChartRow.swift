@@ -24,8 +24,8 @@ struct BarChartRow: View {
     }
 }
 
-private extension BarChartRow {
-    func row(geometry: GeometryProxy) -> some View {
+extension BarChartRow {
+    private func row(geometry: GeometryProxy) -> some View {
         HStack(alignment: .bottom, spacing: (geometry.frame(in: .local).width - 22) / CGFloat(values.count * 3)) {
             ForEach(0 ..< values.count, id: \.self) { index in
                 self.cell(geometry: geometry, index: index)
@@ -33,7 +33,7 @@ private extension BarChartRow {
         }
     }
 
-    func cell(geometry: GeometryProxy, index: Int) -> some View {
+    private func cell(geometry: GeometryProxy, index: Int) -> some View {
         BarChartCell(
             index: index,
             value: normalizedValue(index: index),
@@ -46,28 +46,27 @@ private extension BarChartRow {
     }
 }
 
-private extension BarChartRow {
-    var values: [Double] {
+extension BarChartRow {
+    private var values: [Double] {
         data.points.map(\.value)
     }
 
-    var maxValue: Double {
+    private var maxValue: Double {
         guard let max = values.max() else {
             return 1
         }
         return max != 0 ? max : 1
     }
 
-    func normalizedValue(index: Int) -> Double {
-        return Double(values[index]) / Double(maxValue)
+    private func normalizedValue(index: Int) -> Double {
+        Double(values[index]) / Double(maxValue)
     }
 
-    func isTouchInCell(index: Int) -> Bool {
-        if let touchLocation = touchLocation {
-            return touchLocation > CGFloat(index) / CGFloat(values.count)
-                && touchLocation < CGFloat(index + 1) / CGFloat(values.count)
-        } else {
+    private func isTouchInCell(index: Int) -> Bool {
+        guard let touchLocation = touchLocation else {
             return false
         }
+        return touchLocation > CGFloat(index) / CGFloat(values.count)
+            && touchLocation < CGFloat(index + 1) / CGFloat(values.count)
     }
 }

@@ -23,19 +23,19 @@ struct PieChartCell: View {
             .fill(LinearGradient(gradient: gradientColor.gradient, startPoint: .bottom, endPoint: .top))
             .overlay(path.stroke(backgroundColor, lineWidth: 2))
             .scaleEffect(show ? 1 : 0)
-            .animation(Animation.spring().delay(Double(index) * 0.04))
+            .animation(Animation.spring().delay(Double(index) * 0.04), value: show)
             .onAppear {
                 self.show = true
             }
     }
 }
 
-private extension PieChartCell {
-    var radius: CGFloat {
+extension PieChartCell {
+    private var radius: CGFloat {
         min(rect.width, rect.height) / 2
     }
 
-    var path: Path {
+    private var path: Path {
         var path = Path()
         path.addArc(center: rect.mid, radius: radius, startAngle: Angle(degrees: startDeg),
                     endAngle: Angle(degrees: endDeg), clockwise: false)
@@ -45,8 +45,8 @@ private extension PieChartCell {
     }
 }
 
-private extension CGRect {
-    var mid: CGPoint {
+extension CGRect {
+    fileprivate var mid: CGPoint {
         CGPoint(x: midX, y: midY)
     }
 }

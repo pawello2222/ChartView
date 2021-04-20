@@ -30,25 +30,37 @@ public struct BarChartView<ImageContent>: View where ImageContent: View {
     }
 
     private var currentChartPoint: ChartPoint? {
-        guard !data.points.isEmpty, touchLocation != nil else { return nil }
-        let index = max(0, min(data.points.count - 1,
-                               Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))))
-        return self.data.points[index]
+        guard !data.points.isEmpty, touchLocation != nil else {
+            return nil
+        }
+        let index = max(
+            0,
+            min(
+                data.points.count - 1,
+                Int(floor((touchLocation! * formSize.width) / (formSize.width / CGFloat(data.points.count))))
+            )
+        )
+        return data.points[index]
     }
 
     private var currentStyle: ChartStyle {
         colorScheme == .dark ? darkStyle : style
     }
 
-    public init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
-                formSize: CGSize = ChartForm.medium, dropShadow: Bool = true,
-                cornerImage: @escaping () -> ImageContent)
-    {
+    public init(
+        data: ChartData,
+        title: String,
+        legend: String? = nil,
+        style: ChartStyle = .barChartStyleOrangeLight,
+        formSize: CGSize = ChartForm.medium,
+        dropShadow: Bool = true,
+        cornerImage: @escaping () -> ImageContent
+    ) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
         self.formSize = formSize
         self.dropShadow = dropShadow
         self.cornerImage = cornerImage
@@ -84,23 +96,28 @@ public struct BarChartView<ImageContent>: View where ImageContent: View {
     }
 }
 
-public extension BarChartView where ImageContent == EmptyView {
-    init(data: ChartData, title: String, legend: String? = nil, style: ChartStyle = .barChartStyleOrangeLight,
-         formSize: CGSize = ChartForm.medium, dropShadow: Bool = true)
-    {
+extension BarChartView where ImageContent == EmptyView {
+    public init(
+        data: ChartData,
+        title: String,
+        legend: String? = nil,
+        style: ChartStyle = .barChartStyleOrangeLight,
+        formSize: CGSize = ChartForm.medium,
+        dropShadow: Bool = true
+    ) {
         self.data = data
         self.title = title
         self.legend = legend
         self.style = style
-        self.darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
+        darkStyle = style.darkStyle ?? .barChartStyleOrangeDark
         self.formSize = formSize
         self.dropShadow = dropShadow
-        self.cornerImage = { EmptyView() }
+        cornerImage = { EmptyView() }
     }
 }
 
-private extension BarChartView {
-    var topView: some View {
+extension BarChartView {
+    private var topView: some View {
         HStack {
             if currentValue == nil {
                 Text(title)
@@ -119,7 +136,7 @@ private extension BarChartView {
     }
 
     @ViewBuilder
-    var legendView: some View {
+    private var legendView: some View {
         if legend != nil {
             Text(legend!)
                 .font(.headline)
@@ -130,7 +147,7 @@ private extension BarChartView {
     }
 
     @ViewBuilder
-    var labelView: some View {
+    private var labelView: some View {
         if legend != nil && currentChartPoint != nil {
             LabelView(showArrow: true, arrowOffset: arrowOffset, title: currentChartPoint!.label ?? "")
                 .offset(x: labelViewOffset, y: -6)
@@ -139,27 +156,26 @@ private extension BarChartView {
     }
 }
 
-private extension BarChartView {
-    var arrowOffset: CGFloat {
-        if let touchLocation = touchLocation {
-            let realLoc = (touchLocation * formSize.width) - 50
-            if realLoc < 10 {
-                return realLoc - 10
-            } else if realLoc > formSize.width - 110 {
-                return (formSize.width - 110 - realLoc) * -1
-            } else {
-                return 0
-            }
+extension BarChartView {
+    private var arrowOffset: CGFloat {
+        guard let touchLocation = touchLocation else {
+            return 0
+        }
+
+        let realLoc = (touchLocation * formSize.width) - 50
+        if realLoc < 10 {
+            return realLoc - 10
+        } else if realLoc > formSize.width - 110 {
+            return (formSize.width - 110 - realLoc) * -1
         } else {
             return 0
         }
     }
 
-    var labelViewOffset: CGFloat {
-        if let touchLocation = touchLocation {
-            return min(formSize.width - 110, max(10, (touchLocation * formSize.width) - 50))
-        } else {
+    private var labelViewOffset: CGFloat {
+        guard let touchLocation = touchLocation else {
             return 0
         }
+        return min(formSize.width - 110, max(10, (touchLocation * formSize.width) - 50))
     }
 }
